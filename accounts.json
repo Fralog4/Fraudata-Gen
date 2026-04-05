@@ -1,0 +1,20 @@
+[
+    {
+        "id": "afe70509-2a2e-47c1-b3f1-3f17463d1b8e",
+        "customerName": "Star Botsford",
+        "balance": "5762.70",
+        "countryCode": "GB"
+    },
+    {
+        "id": "d0ec4cef-1525-40f7-a67a-a5c49b1df336",
+        "customerName": "Katherine Howell",
+        "balance": "655.48",
+        "countryCode": "GB"
+    },
+    {
+        "id": "6292fd5a-6afa-4978-9c9b-35dd7a55e90f",
+        "customerName": "Dino Hammes",
+        "balance": "5910.64",
+        "countryCode": "GB"
+    }
+]

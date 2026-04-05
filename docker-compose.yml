@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  fraudgen-api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: fraudgen-api-container
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mappiamo una cartella locale per poter vedere i file JSON/CSV generati!
+      - ./generated-data:/app
+    environment:
+      - TZ=Europe/Rome
+    restart: unless-stopped

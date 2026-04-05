@@ -1,0 +1,113 @@
+[
+    {
+        "id": "8b3f4678-b0a7-4a34-a891-b971b8e2fdb0",
+        "accountId": "afe70509-2a2e-47c1-b3f1-3f17463d1b8e",
+        "amount": "173.37",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-21T22:10:07.7612272"
+    },
+    {
+        "id": "182f1eef-111c-438d-95c1-0adade7b26e3",
+        "accountId": "afe70509-2a2e-47c1-b3f1-3f17463d1b8e",
+        "amount": "579.55",
+        "type": "WITHDRAWAL",
+        "timestamp": "2026-03-04T22:10:07.7612272",
+        "merchantName": "Upton-Sauer"
+    },
+    {
+        "id": "37f1a148-0043-4ff6-a834-b4f5f8d38b50",
+        "accountId": "afe70509-2a2e-47c1-b3f1-3f17463d1b8e",
+        "amount": "692.26",
+        "type": "WITHDRAWAL",
+        "timestamp": "2026-03-11T22:10:07.8602581",
+        "merchantName": "Will-Koch"
+    },
+    {
+        "id": "038ceba6-6971-4bb5-9310-9cc8a7f7fb1d",
+        "accountId": "afe70509-2a2e-47c1-b3f1-3f17463d1b8e",
+        "amount": "727.79",
+        "type": "WITHDRAWAL",
+        "timestamp": "2026-02-28T22:10:07.8636851",
+        "merchantName": "O'Connell LLC"
+    },
+    {
+        "id": "eced5a5b-4ed2-4e20-a5d2-0c3597c79791",
+        "accountId": "afe70509-2a2e-47c1-b3f1-3f17463d1b8e",
+        "amount": "144.89",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-21T22:10:07.9084813"
+    },
+    {
+        "id": "19bddcb4-2bba-49ee-95ee-b1e3929b774f",
+        "accountId": "d0ec4cef-1525-40f7-a67a-a5c49b1df336",
+        "amount": "632.87",
+        "type": "DEPOSIT",
+        "timestamp": "2026-02-28T22:10:07.9293656"
+    },
+    {
+        "id": "75bfc860-81ce-4c82-859c-4e6b1005c970",
+        "accountId": "d0ec4cef-1525-40f7-a67a-a5c49b1df336",
+        "amount": "635.29",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-10T22:10:07.9303662"
+    },
+    {
+        "id": "c6618c0a-f68e-48d9-942c-6f9e202066cd",
+        "accountId": "d0ec4cef-1525-40f7-a67a-a5c49b1df336",
+        "amount": "464.30",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-11T22:10:07.9303662"
+    },
+    {
+        "id": "ed4b9bcb-5602-4d42-afe2-6fe6abb9da8e",
+        "accountId": "d0ec4cef-1525-40f7-a67a-a5c49b1df336",
+        "amount": "9.02",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-12T22:10:07.932435"
+    },
+    {
+        "id": "ae3a3ed3-4231-4479-8c32-6acfcaf82e8c",
+        "accountId": "d0ec4cef-1525-40f7-a67a-a5c49b1df336",
+        "amount": "413.43",
+        "type": "WITHDRAWAL",
+        "timestamp": "2026-03-20T22:10:07.9334494",
+        "merchantName": "Beer LLC"
+    },
+    {
+        "id": "a5b8bb2d-3893-466e-b348-df2627956022",
+        "accountId": "6292fd5a-6afa-4978-9c9b-35dd7a55e90f",
+        "amount": "922.53",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-14T22:10:07.9386102"
+    },
+    {
+        "id": "977ffde7-406c-4572-ae12-0bb81ae61e96",
+        "accountId": "6292fd5a-6afa-4978-9c9b-35dd7a55e90f",
+        "amount": "435.48",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-19T22:10:07.9394486"
+    },
+    {
+        "id": "b185ee42-972e-4313-8deb-8e105924e597",
+        "accountId": "6292fd5a-6afa-4978-9c9b-35dd7a55e90f",
+        "amount": "781.57",
+        "type": "WITHDRAWAL",
+        "timestamp": "2026-03-17T22:10:07.9394486",
+        "merchantName": "Luettgen and Sons"
+    },
+    {
+        "id": "a378e3ef-b959-4df8-be90-0055a6069263",
+        "accountId": "6292fd5a-6afa-4978-9c9b-35dd7a55e90f",
+        "amount": "312.79",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-20T22:10:07.9404488",
+        "isFraudulent": true
+    },
+    {
+        "id": "f5c9eea8-4729-400c-a0ff-0a19bb45ae79",
+        "accountId": "6292fd5a-6afa-4978-9c9b-35dd7a55e90f",
+        "amount": "163.95",
+        "type": "DEPOSIT",
+        "timestamp": "2026-03-21T22:10:07.9414501"
+    }
+]

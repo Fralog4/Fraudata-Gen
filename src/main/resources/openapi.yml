@@ -1,0 +1,48 @@
+openapi: "3.0.0"
+info:
+  title: "FrauData Generator API"
+  version: "1.0.0"
+  description: "REST API to generate synthetic banking data for ML and testing purposes."
+paths:
+  /api/v1/generate:
+    post:
+      summary: "Generate synthetic accounts and transactions"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerationRequest"
+      responses:
+        "200":
+          description: "Data successfully generated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerationResponse"
+components:
+  schemas:
+    GenerationRequest:
+      type: object
+      properties:
+        accountsCount:
+          type: integer
+          example: 5
+        countryCode:
+          type: string
+          example: "GB"
+        transactionsPerAccount:
+          type: integer
+          example: 10
+        fraudProbability:
+          type: number
+          example: 5.5
+    GenerationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        totalAccounts:
+          type: integer
+        totalTransactions:
+          type: integer
