@@ -17,8 +17,7 @@ import it.fraudata.domain.GenerationResponse
 import it.fraudata.util.DataExporter
 import it.fraudata.util.generateFraudData
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
 fun main() {
 
     println("Initializing Ktor Netty Engine...")
@@ -48,7 +47,7 @@ fun main() {
                     countryCode = request.countryCode }
 
                     transactions { countPerAccount = request.transactionsPerAccount
-                    fraudProbabilityPercentage = request.fraudProbability}
+                    persona = request.persona}
                 }
 
                 DataExporter.exportToJson(accounts,transactions)

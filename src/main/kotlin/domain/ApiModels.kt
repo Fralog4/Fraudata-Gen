@@ -7,7 +7,7 @@ data class GenerationRequest(
     val accountsCount: Int = 10,
     val countryCode: String = "US",
     val transactionsPerAccount: Int = 5,
-    val fraudProbability: Double = 1.0
+    val persona: String = "Salaryman" // "Salaryman", "Student", "Gambler"
 )
 
 @Serializable

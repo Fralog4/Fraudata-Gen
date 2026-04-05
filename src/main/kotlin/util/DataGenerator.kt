@@ -44,4 +44,57 @@ class DataGenerator(private val faker: Faker = Faker()) {
                 isFraudulent = isFraud            )
         }
     }
+
+    fun generateBehavioralTransactions(
+        account: Account, 
+        count: Int, 
+        persona: it.fraudata.domain.Persona
+    ): List<Transaction> {
+        
+        logger.info("Generating $count behavioral transactions for account ${account.id} matching persona: ${persona.name}")
+        
+        val transactions = mutableListOf<Transaction>()
+        
+        // Partiamo con uno stipendio per dare fondi all'utente
+        var currentState = it.fraudata.domain.ExpenseCategory.SALARY
+        var currentDateTime = LocalDateTime.now().minusDays(30) // Partiamo da 30 giorni fa
+
+        for (i in 0 until count) {
+            // 1. Troviamo il profilo di spesa per la categoria corrente
+            val spendProfile = persona.spendProfiles[currentState] 
+                ?: throw IllegalStateException("Missing spend profile for $currentState")
+
+            // 2. Generiamo l'importo corretto in base ai limiti della Persona
+            val amount = BigDecimal(
+                faker.number().randomDouble(2, spendProfile.minAmount.toInt(), spendProfile.maxAmount.toInt())
+            ).setScale(2, RoundingMode.HALF_UP)
+
+            // 3. Capiamo se è un deposito o un prelievo
+            val txType = if (currentState == it.fraudata.domain.ExpenseCategory.SALARY) {
+                TransactionType.DEPOSIT
+            } else {
+                TransactionType.WITHDRAWAL
+            }
+
+            // 4. Creiamo la transazione
+            transactions.add(
+                Transaction(
+                    accountId = account.id,
+                    amount = amount,
+                    type = txType,
+                    timestamp = currentDateTime,
+                    merchantName = if (txType == TransactionType.WITHDRAWAL) "${currentState.name} MERCHANT" else "EMPLOYER INC.",
+                    isFraudulent = false // Le frodi le gestiremo a parte o possiamo considerarle anomalie
+                )
+            )
+
+            // 5. Extension Function
+            currentState = persona.transitionMatrix.getNextState(currentState)
+            
+            // Avanziamo il tempo di qualche ora casuale per la prossima transazione
+            currentDateTime = currentDateTime.plusHours(faker.number().numberBetween(2L, 48L))
+        }
+
+        return transactions
+    }
 }

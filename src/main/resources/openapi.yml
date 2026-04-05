@@ -22,7 +22,7 @@ paths:
                 $ref: "#/components/schemas/GenerationResponse"
 components:
   schemas:
-    GenerationRequest:
+  GenerationRequest:
       type: object
       properties:
         accountsCount:
@@ -33,10 +33,11 @@ components:
           example: "GB"
         transactionsPerAccount:
           type: integer
-          example: 10
-        fraudProbability:
-          type: number
-          example: 5.5
+          example: 20
+        persona:
+          type: string
+          enum: [Salaryman, Student, Gambler]
+          example: "Student"
     GenerationResponse:
       type: object
       properties:
