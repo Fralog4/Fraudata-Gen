@@ -3,7 +3,26 @@ info:
   title: "FrauData Generator API"
   version: "1.0.0"
   description: "REST API to generate synthetic banking data for ML and testing purposes."
+
 paths:
+  /api/v1/stream:
+    post:
+      summary: "Start a live stream of transactions to Kafka"
+      description: "Generates data and streams it in background mimicking real-time TPS."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StreamRequest"
+      responses:
+        "202":
+          description: "Stream accepted and processing in background"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StreamResponse"
+
   /api/v1/generate:
     post:
       summary: "Generate synthetic accounts and transactions"
@@ -20,9 +39,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GenerationResponse"
+
 components:
   schemas:
-  GenerationRequest:
+    StreamRequest:
+      type: object
+      properties:
+        accountsCount:
+          type: integer
+          example: 2
+        countryCode:
+          type: string
+          example: "GB"
+        transactionsPerAccount:
+          type: integer
+          example: 50
+        persona:
+          type: string
+          enum: [Salaryman, Student, Gambler]
+          example: "Gambler"
+        tps:
+          type: integer
+          example: 5
+          
+    StreamResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          type: string
+        estimatedCompletionSeconds:
+          type: integer
+          
+    GenerationRequest:
       type: object
       properties:
         accountsCount:
@@ -38,6 +88,7 @@ components:
           type: string
           enum: [Salaryman, Student, Gambler]
           example: "Student"
+          
     GenerationResponse:
       type: object
       properties:

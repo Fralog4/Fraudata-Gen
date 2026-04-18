@@ -13,9 +13,12 @@ import java.util.UUID
 enum class TransactionType {
     DEPOSIT, WITHDRAWAL
 }
+
+@Serializable
+enum class Currency { EUR, USD, GBP, JPY, CHF }
+
 @JvmInline
 @Serializable
-
 value class CountryCode(val value: String) {
     init {
         require(value.length == 2) { "the code must have 2 letters length" }
@@ -28,17 +31,22 @@ data class Account(
     val customerName : String,
     @Serializable(with = BigDecimalSerializer::class) // Custom serializer
     val balance : BigDecimal,
-    val countryCode: CountryCode = CountryCode("IT")
+    val countryCode: CountryCode = CountryCode("IT"),
+    val baseCurrency: Currency
 )
 
 @Serializable
 data class Transaction(
-    val id : String = UUID.randomUUID().toString(),
+    val id: String = UUID.randomUUID().toString(),
     val accountId: String,
-    @Serializable(with = BigDecimalSerializer::class) // Custom serializer
-    val amount : BigDecimal,
-    val type : TransactionType,
-    @Serializable(with = LocalDateTimeSerializer::class) // Custom serializer
-    val timestamp : LocalDateTime = LocalDateTime.now(),
-    val merchantName : String? = null,
-    val isFraudulent: Boolean = false)
+    @Serializable(with = BigDecimalSerializer::class)
+    val amount: BigDecimal,
+    val currency: Currency, 
+    @Serializable(with = BigDecimalSerializer::class)
+    val baseAmount: BigDecimal,
+    val type: TransactionType,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    val timestamp: LocalDateTime = LocalDateTime.now(),
+    val merchantName: String? = null,
+    val isFraudulent: Boolean = false
+)

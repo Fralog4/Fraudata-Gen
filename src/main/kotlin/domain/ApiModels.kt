@@ -16,3 +16,20 @@ data class GenerationResponse(
     val totalAccounts: Int,
     val totalTransactions: Int
 )
+
+
+@Serializable 
+data class StreamRequest(
+    val accountsCount : Int = 5,
+    val countryCode : String = "GB",
+    val transactionsPerAccount : Int = 10,
+    val persona : String = "Gambler",
+    val tps : Int = 5 //how many transactions per second to send to Kafka
+)
+
+@Serializable
+data class StreamResponse(
+    val message : String,
+    val status: String, 
+    val estimatedCompletionSeconds: Int
+)

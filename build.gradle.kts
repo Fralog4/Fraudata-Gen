@@ -30,6 +30,9 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:${ktorVersion}")
     implementation("io.ktor:ktor-serialization-kotlinx-json:${ktorVersion}")
     implementation("io.ktor:ktor-server-swagger:${ktorVersion}")
+
+    // --- KAFKA DEPENDENCY ---
+    implementation("org.apache.kafka:kafka-clients:3.7.0")
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("io.mockk:mockk:1.13.10")

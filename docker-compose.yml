@@ -14,3 +14,32 @@ services:
     environment:
       - TZ=Europe/Rome
     restart: unless-stopped
+    
+  # Il server Kafka
+  kafka:
+    image: bitnami/kafka:3.7.0
+    container_name: local-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # Configurazioni per far girare Kafka da solo senza Zookeeper (KRaft mode)
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@localhost:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      # Creiamo automaticamente un "topic" (un canale) chiamato 'transactions'
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+
+  # Una bellissima interfaccia grafica web per vedere cosa c'è dentro Kafka!
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8081:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=LocalKafka
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      - kafka

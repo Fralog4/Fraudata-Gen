@@ -77,9 +77,9 @@ The application returns a JSON response with the operation summary and automatic
 
 This project is continuously evolving. Here are the top 10 planned improvements to make it even more enterprise-ready:
 
-- [ ] **1. Dockerization:** Create a `Dockerfile` and `docker-compose.yml` to run the Ktor application and Swagger UI inside an isolated container with zero setup.
-- [ ] **2. Advanced ML Personas:** Implement Markov Chains to simulate realistic user behaviors (e.g., "The Student", "The Gambler", "The Salaryman") instead of purely random distributions.
-- [ ] **3. Kafka Integration:** Add an endpoint to stream generated transactions in real-time to an Apache Kafka topic, simulating a live banking environment.
+- [ ] **1. Dockerization:** Create a `Dockerfile` and `docker-compose.yml` to run the Ktor application and Swagger UI inside an isolated container with zero setup. DONE
+- [ ] **2. Advanced ML Personas:** Implement Markov Chains to simulate realistic user behaviors (e.g., "The Student", "The Gambler", "The Salaryman") instead of purely random distributions. DONE 
+- [ ] **3. Kafka Integration:** Add an endpoint to stream generated transactions in real-time to an Apache Kafka topic, simulating a live banking environment. DONE
 - [ ] **4. Multi-Currency & FX Rates:** Support different currencies (`USD`, `EUR`, `GBP`) and simulate real-world Foreign Exchange rate conversions within the transactions.
 - [ ] **5. Database Sink:** Replace the basic file exporter (JSON/CSV) with an interface to inject data directly into a PostgreSQL or MongoDB database.
 - [ ] **6. Comprehensive Test Suite:** Add Unit Tests using `JUnit 5` and `MockK`, and implement Ktor Server Tests (`testApplication`) for the API endpoints.

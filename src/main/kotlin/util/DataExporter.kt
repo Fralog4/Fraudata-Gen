@@ -2,13 +2,13 @@ package it.fraudata.util
 
 import it.fraudata.domain.Account
 import it.fraudata.domain.Transaction
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.File
 
 object DataExporter {
+    
     private val jsonFormatter = Json { prettyPrint = true }
-
 
     fun exportToJson(accounts: List<Account>, transactions: List<Transaction>) {
         println("Exporting data to JSON...")
@@ -20,31 +20,28 @@ object DataExporter {
         File("transactions.json").writeText(transactionsJson)
 
         println("JSON export completed successfully.")
-
     }
-
 
     fun exportToCsv(accounts: List<Account>, transactions: List<Transaction>) {
         println("Exporting data to CSV...")
 
-        val accountHeader = "id,customerName,balance,countryCode"
-
-        // Kotlin Magic: joinToString replaces complex loops and StringBuilders
+        // AGGIORNATO: Aggiunto baseCurrency
+        val accountHeader = "id,customerName,balance,countryCode,baseCurrency"
         val accountsCsv = accounts.joinToString(separator = "\n", prefix = "$accountHeader\n") {
-            "${it.id},\"${it.customerName}\",${it.balance},${it.countryCode.value}"
+            "${it.id},\"${it.customerName}\",${it.balance},${it.countryCode.value},${it.baseCurrency}"
         }
 
-        val txHeader = "id,accountId,amount,type,timestamp,merchantName,isFraudulent"
+        // AGGIORNATO: Aggiunti currency e baseAmount
+        val txHeader = "id,accountId,amount,currency,baseAmount,type,timestamp,merchantName,isFraudulent"
         val transactionsCsv = transactions.joinToString(separator = "\n", prefix = "$txHeader\n") {
             // Handle null merchant name gracefully
             val merchant = it.merchantName?.let { name -> "\"$name\"" } ?: ""
-            "${it.id},${it.accountId},${it.amount},${it.type},${it.timestamp},$merchant,${it.isFraudulent}"
+            "${it.id},${it.accountId},${it.amount},${it.currency},${it.baseAmount},${it.type},${it.timestamp},$merchant,${it.isFraudulent}"
         }
 
         File("accounts.csv").writeText(accountsCsv)
         File("transactions.csv").writeText(transactionsCsv)
 
         println("CSV export completed successfully.")
-
     }
 }
