@@ -6,30 +6,35 @@ Designed to solve the "Cold Start" and Privacy (GDPR) problems in Fintech, this 
 
 ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 ![Ktor](https://img.shields.io/badge/ktor-%23087CFA.svg?style=for-the-badge&logo=ktor&logoColor=white)
-![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white)
+![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-> **Note:** [Insert an animated GIF here showing the Swagger UI execution and the generated JSON files]
+> **Note:** [Insert an animated GIF here showing the Swagger UI execution and Kafka UI monitoring]
 
 ## ✨ Key Features
 
+* **Behavioral Simulation Engine:** Uses Markov Chains to generate realistic transaction sequences based on predefined psychological personas (e.g., "The Student", "The Gambler", "The Salaryman").
+* **Real-Time Data Streaming:** Integrated with Apache Kafka to simulate live POS/ATM traffic. Uses Kotlin Coroutines to manage asynchronous background streaming with configurable TPS (Transactions Per Second).
+* **Multi-Currency & FX Rates:** Supports international transactions (`EUR`, `USD`, `GBP`, `JPY`, `CHF`) with an internal Foreign Exchange engine calculating base amounts.
 * **Custom Kotlin DSL:** A type-safe, elegant Domain Specific Language (`@DslMarker`) to configure data generation rules dynamically.
-* **Asynchronous & Non-Blocking:** Powered by Kotlin Coroutines and the Ktor Netty engine for lightning-fast concurrent requests.
-* **Zero-Reflection Serialization:** Uses `kotlinx-serialization` for compile-time JSON encoding, drastically reducing memory overhead compared to traditional Java libraries like Jackson.
+* **Zero-Reflection Serialization:** Uses `kotlinx-serialization` for compile-time JSON encoding, drastically reducing memory overhead.
 * **API-First Design:** Fully documented with OpenAPI 3.0 and bundled with an interactive Swagger UI.
-* **Domain-Driven:** Immutability by default (`data class`), Type-Safety (`value class`), and strict separation between the API layer and the generation engine.
 
 ## 🛠️ Tech Stack
 
-* **Language:** Kotlin 1.9+
-* **Framework:** Ktor Server (Netty)
-* **Data Mocking:** Datafaker
-* **Serialization:** `kotlinx-serialization-json`
-* **Build Tool:** Gradle (Kotlin DSL)
+* **Language:** Kotlin 2.2.0
+* **Framework:** Ktor Server 2.3.10 (Netty)
+* **Message Broker:** Apache Kafka 3.7.0 (KRaft mode)
+* **Data Mocking:** Datafaker 2.1.0
+* **Serialization:** `kotlinx-serialization-json` 1.6.3
+* **Testing:** JUnit 5 (5.10.2) & MockK (1.13.10)
+* **Infrastructure:** Docker & Docker Compose
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-* Java JDK 17 or higher installed.
+* Java JDK 21 installed.
+* Docker Desktop (for Kafka infrastructure).
 
 ### Installation & Run
 
@@ -39,12 +44,17 @@ Designed to solve the "Cold Start" and Privacy (GDPR) problems in Fintech, this 
    cd fraud-data-generator
    ```
 
-2. Run the application using the Gradle wrapper:
+2. Start the Kafka Infrastructure (runs in background):
+   ```bash
+   docker-compose up -d
+   ```
+   *You can monitor Kafka topics by opening Kafka UI at `http://localhost:8081`.*
+
+3. Run the Ktor application locally using the Gradle wrapper:
    ```bash
    ./gradlew run
    ```
-
-3. The Ktor Netty server will start on port `8080`.
+   *The Ktor Netty server will start on port `8080`.*
 
 ## 📖 Usage
 
@@ -52,9 +62,9 @@ Designed to solve the "Cold Start" and Privacy (GDPR) problems in Fintech, this 
 Open your favorite browser and navigate to:
 👉 **`http://localhost:8080/swagger`**
 
-From there, you can interact with the `POST /api/v1/generate` endpoint, tweak the generation parameters, and execute the request.
+### Endpoint 1: Batch Generation (`/api/v1/generate`)
+Generates data instantly and exports it to JSON and CSV files in the project root.
 
-### Example API Request
 ```bash
 curl -X 'POST' \
   'http://localhost:8080/api/v1/generate' \
@@ -64,26 +74,40 @@ curl -X 'POST' \
   "accountsCount": 50,
   "countryCode": "GB",
   "transactionsPerAccount": 20,
-  "fraudProbability": 3.5
+  "persona": "Gambler"
 }'
 ```
 
-### Output
-The application returns a JSON response with the operation summary and automatically exports the generated data into the root folder as `accounts.json`, `transactions.json`, `accounts.csv`, and `transactions.csv`.
+### Endpoint 2: Live Streaming (`/api/v1/stream`)
+Fires an asynchronous background job that streams generated transactions to the Kafka `transactions` topic mimicking real-time traffic.
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8080/api/v1/stream' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "accountsCount": 5,
+  "countryCode": "US",
+  "transactionsPerAccount": 50,
+  "persona": "Student",
+  "tps": 10
+}'
+```
 
 ---
 
 ## 🎯 TODO List (Future Improvements)
 
-This project is continuously evolving. Here are the top 10 planned improvements to make it even more enterprise-ready:
+This project is continuously evolving. Here are the top planned improvements to make it even more enterprise-ready:
 
-- [ ] **1. Dockerization:** Create a `Dockerfile` and `docker-compose.yml` to run the Ktor application and Swagger UI inside an isolated container with zero setup. DONE
-- [ ] **2. Advanced ML Personas:** Implement Markov Chains to simulate realistic user behaviors (e.g., "The Student", "The Gambler", "The Salaryman") instead of purely random distributions. DONE 
-- [ ] **3. Kafka Integration:** Add an endpoint to stream generated transactions in real-time to an Apache Kafka topic, simulating a live banking environment. DONE
-- [ ] **4. Multi-Currency & FX Rates:** Support different currencies (`USD`, `EUR`, `GBP`) and simulate real-world Foreign Exchange rate conversions within the transactions.
+- [x] **1. Dockerization:** Create a `Dockerfile` and `docker-compose.yml` to run the application and infrastructure.
+- [x] **2. Advanced ML Personas:** Implement Markov Chains to simulate realistic user behaviors instead of purely random distributions.
+- [x] **3. Kafka Integration:** Add an endpoint to stream generated transactions in real-time to an Apache Kafka topic.
+- [x] **4. Multi-Currency & FX Rates:** Support different currencies and simulate real-world Foreign Exchange rate conversions.
 - [ ] **5. Database Sink:** Replace the basic file exporter (JSON/CSV) with an interface to inject data directly into a PostgreSQL or MongoDB database.
 - [ ] **6. Comprehensive Test Suite:** Add Unit Tests using `JUnit 5` and `MockK`, and implement Ktor Server Tests (`testApplication`) for the API endpoints.
 - [ ] **7. CI/CD Pipeline:** Set up GitHub Actions to automatically build, test, and lint the code on every push or Pull Request.
 - [ ] **8. Centralized Configuration:** Migrate hardcoded default values to an `application.conf` (HOCON) or `.env` file for easier environment management.
-- [ ] **9. Structured Logging:** Integrate `kotlin-logging` and `Logback`, formatting logs in JSON format for easy ingestion by an ELK (Elasticsearch, Logstash, Kibana) stack.
-- [ ] **10. Authentication Layer:** Secure the `/generate` endpoint using API Keys or JWT tokens to prevent unauthorized data generation in a deployed environment.
+- [ ] **9. Structured Logging:** Integrate `kotlin-logging` and `Logback`, formatting logs in JSON format for easy ingestion by an ELK stack.
+- [ ] **10. Authentication Layer:** Secure the endpoints using API Keys or JWT tokens to prevent unauthorized data generation in a deployed environment.
