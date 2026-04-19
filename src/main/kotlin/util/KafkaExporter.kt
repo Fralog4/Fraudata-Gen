@@ -14,26 +14,30 @@ object KafkaExporter {
     private val producer : KafkaProducer<String,String>
     private const val TOPIC = "transactions"
     private val jsonFormatter = Json {prettyPrint = false}
+    private val logger = KotlinLogging.logger {}
 
 
-init{
-    println("Initializing Kafka Producer...")
-        val props = Properties()
-        // Dove si trova il server Kafka
-        props["bootstrap.servers"] = "localhost:9092"
 
-        // Diciamo a Kafka come trasformare i nostri dati in byte (usiamo StringSerializer per entrambi)
-        props["key.serializer"] = StringSerializer::class.java.name
-        props["value.serializer"] = StringSerializer::class.java.name
+    fun init( bootstrapServers : String){
 
-        props["acks"]=1 // acks=1 significa "non bloccarti aspettando che tutti i server confermino, basta il primo"
+        if(producer != null) return //avoid double init
+
+
+        val props= Properties().apply{
+
+            put("bootstrap.servers", bootstrapServers)
+            put("key.serializer", StringSerializer::class.java.name)
+            put("value.serializer", StringSerializer::class.java.name)
+            put("acks", "1")
+
+        }
         producer = KafkaProducer<String,String>(props)
-
-}
+        logger.info("Kafka Producer initialized with servers: $bootstrapServers")
+    }
 
 fun streamTransactions(transactions : List<Transaction>){
 
-    println("Streaming ${transactions.size} transactions to Kafka topic '$TOPIC'...")
+    logger.info("Streaming ${transactions.size} transactions to Kafka topic '$TOPIC'...")
 
 
     for (tx in transactions){
@@ -53,7 +57,7 @@ fun streamTransactions(transactions : List<Transaction>){
     }
 
     producer.flush()
-    println("Kafka streaming completed.")
+    logger.info("Kafka streaming completed.")
 }
 
 /**
@@ -62,7 +66,7 @@ fun streamTransactions(transactions : List<Transaction>){
      */
     suspend fun streamTransactionsLive (transactions : List<Transaction>, tps: Int){
 
-        println("Starting LIVE stream of ${transactions.size} transactions at $tps TPS...")
+        logger.info("Starting LIVE stream of ${transactions.size} transactions at $tps TPS...")
 
         val delayMillis = 1000L / tps.coerceAtLeast(1) // Evitiamo divisione per zero
 
@@ -77,7 +81,7 @@ fun streamTransactions(transactions : List<Transaction>){
         }
 
         producer.flush()
-        println("LIVE Kafka streaming completed.")
+        logger.info("LIVE Kafka streaming completed.")
 
     }
 }

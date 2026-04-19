@@ -13,7 +13,30 @@ import java.util.logging.Logger
 
 class DataGenerator(private val faker: Faker = Faker()) {
 
-    private val logger = Logger.getLogger(DataGenerator::class.java.name)
+    private val logger = KotlinLogging.logger {}
+
+    fun saveAccountToDb(account: Account) = transaction {
+        AccountsTable.insert {
+            it[id] = account.id
+            it[customerName] = account.customerName
+            it[balance] = account.balance
+            it[countryCode] = account.countryCode.value
+            it[baseCurrency] = account.baseCurrency.name
+        }
+    }
+    
+    fun saveTransactionToDb(tx: Transaction) = transaction {
+        TransactionsTable.insert {
+            it[id] = tx.id
+            it[accountId] = tx.accountId
+            it[amount] = tx.amount
+            it[currency] = tx.currency.name
+            it[baseAmount] = tx.baseAmount
+            it[type] = tx.type.name
+            it[timestamp] = tx.timestamp // Assicurati che il formato sia compatibile (LocalDateTime)
+            it[merchantName] = tx.merchantName
+            it[isFraudulent] = tx.isFraudulent
+        }
 
     fun generateAccounts(count: Int, targetCountryCode: CountryCode): List<Account> {
         logger.info("Generating $count synthetic accounts for country ${targetCountryCode.value}...")

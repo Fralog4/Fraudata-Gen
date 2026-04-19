@@ -9,9 +9,10 @@ import java.io.File
 object DataExporter {
     
     private val jsonFormatter = Json { prettyPrint = true }
+    private val logger = KotlinLogging.logger {}
 
     fun exportToJson(accounts: List<Account>, transactions: List<Transaction>) {
-        println("Exporting data to JSON...")
+        logger.info("Exporting data to JSON...")
 
         val accountsJson = jsonFormatter.encodeToString(accounts)
         val transactionsJson = jsonFormatter.encodeToString(transactions)
@@ -19,11 +20,11 @@ object DataExporter {
         File("accounts.json").writeText(accountsJson)
         File("transactions.json").writeText(transactionsJson)
 
-        println("JSON export completed successfully.")
+        logger.info("JSON export completed successfully.")
     }
 
     fun exportToCsv(accounts: List<Account>, transactions: List<Transaction>) {
-        println("Exporting data to CSV...")
+        logger.info("Exporting data to CSV...")
 
         // AGGIORNATO: Aggiunto baseCurrency
         val accountHeader = "id,customerName,balance,countryCode,baseCurrency"
@@ -42,6 +43,6 @@ object DataExporter {
         File("accounts.csv").writeText(accountsCsv)
         File("transactions.csv").writeText(transactionsCsv)
 
-        println("CSV export completed successfully.")
+        logger.info("CSV export completed successfully.")
     }
 }

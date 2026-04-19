@@ -8,6 +8,8 @@ paths:
   /api/v1/stream:
     post:
       summary: "Start a live stream of transactions to Kafka"
+      security:
+        - bearerAuth: []
       description: "Generates data and streams it in background mimicking real-time TPS."
       requestBody:
         required: true
@@ -26,6 +28,8 @@ paths:
   /api/v1/generate:
     post:
       summary: "Generate synthetic accounts and transactions"
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -41,6 +45,11 @@ paths:
                 $ref: "#/components/schemas/GenerationResponse"
 
 components:
+securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
   schemas:
     StreamRequest:
       type: object

@@ -13,7 +13,23 @@ services:
       - ./generated-data:/app
     environment:
       - TZ=Europe/Rome
+      # KOTLIN HOCON MAGIC: Sovrascriviamo le variabili dell'application.conf
+      - PORT=8080
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - kafka
     restart: unless-stopped
+  db:
+    image: postgres:16-alpine
+    container_name: fraudgen-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=fraudgen_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     
   # Il server Kafka
   kafka:
@@ -43,3 +59,6 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
     depends_on:
       - kafka
+  volumes:
+    postgres_data:
+
