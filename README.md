@@ -1,4 +1,4 @@
-# 🏦 Synthetic Banking Data Generator (FraudGen)
+# 🏦 Synthetic Banking Data Generator (FraudataGen)
 
 A lightweight, high-performance REST API built with Kotlin and Ktor to generate synthetic, highly realistic banking data (accounts and transactions). 
 
@@ -104,20 +104,3 @@ curl -X 'POST' \
   "tps": 10
 }'
 ```
-
----
-
-## 🎯 TODO List (Future Improvements)
-
-This project is continuously evolving. Here are the top planned improvements to make it even more enterprise-ready:
-
-- [x] **1. Dockerization:** Create a `Dockerfile` and `docker-compose.yml` to run the application and infrastructure.
-- [x] **2. Advanced ML Personas:** Implement Markov Chains to simulate realistic user behaviors instead of purely random distributions.
-- [x] **3. Kafka Integration:** Add an endpoint to stream generated transactions in real-time to an Apache Kafka topic.
-- [x] **4. Multi-Currency & FX Rates:** Support different currencies and simulate real-world Foreign Exchange rate conversions.
-- [x] **5. Database Sink:** Replace the basic file exporter (JSON/CSV) with an interface to inject data directly into a PostgreSQL or MongoDB database.
-- [ ] **6. Comprehensive Test Suite:** Add Unit Tests using `JUnit 5` and `MockK`, and implement Ktor Server Tests (`testApplication`) for the API endpoints.
-- [ ] **7. CI/CD Pipeline:** Set up GitHub Actions to automatically build, test, and lint the code on every push or Pull Request.
-- [x] **8. Centralized Configuration:** Migrate hardcoded default values to an `application.conf` (HOCON) or `.env` file for easier environment management.
-- [x] **9. Structured Logging:** Integrate `kotlin-logging` and `Logback`, formatting logs in JSON format for easy ingestion by an ELK stack.
-- [x] **10. Authentication Layer:** Secure the endpoints using API Keys or JWT tokens to prevent unauthorized data generation in a deployed environment.
