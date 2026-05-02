@@ -2,20 +2,19 @@
 # STAGE 1: BUILD (The "Builder" environment)
 # ==========================================
 
-FROM gradle:8.7-jdk17 AS builder
+FROM gradle:8.7-jdk21 AS builder
 WORKDIR /app
 
-COPY build.gradle.kts . settings.gradle.kts ./
+COPY build.gradle.kts settings.gradle.kts ./
 COPY gradle ./gradle
 COPY src ./src
 
 # --no-daemon velocizza la build su CI/CD spegnendo i processi in background di Gradle
 RUN gradle shadowJar --no-daemon
-
 # ==========================================
 # STAGE 2: RUN (The "Production" environment)
 # ==========================================
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 COPY --from=builder /app/build/libs/*-all.jar fraudgen-api.jar

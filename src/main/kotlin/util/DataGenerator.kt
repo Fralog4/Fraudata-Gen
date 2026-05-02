@@ -10,6 +10,9 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDateTime
 import java.util.logging.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.insert
 
 class DataGenerator(private val faker: Faker = Faker()) {
 
@@ -17,26 +20,27 @@ class DataGenerator(private val faker: Faker = Faker()) {
 
     fun saveAccountToDb(account: Account) = transaction {
         AccountsTable.insert {
-            it[id] = account.id
-            it[customerName] = account.customerName
-            it[balance] = account.balance
-            it[countryCode] = account.countryCode.value
-            it[baseCurrency] = account.baseCurrency.name
+            it[AccountsTable.id] = account.id
+            it[AccountsTable.costumerName] = account.customerName
+            it[AccountsTable.balance] = account.balance
+            it[AccountsTable.countryCode] = account.countryCode.value
+            it[AccountsTable.baseCurrency] = account.baseCurrency.name
         }
     }
     
     fun saveTransactionToDb(tx: Transaction) = transaction {
         TransactionsTable.insert {
-            it[id] = tx.id
-            it[accountId] = tx.accountId
-            it[amount] = tx.amount
-            it[currency] = tx.currency.name
-            it[baseAmount] = tx.baseAmount
-            it[type] = tx.type.name
-            it[timestamp] = tx.timestamp // Assicurati che il formato sia compatibile (LocalDateTime)
-            it[merchantName] = tx.merchantName
-            it[isFraudulent] = tx.isFraudulent
+            it[TransactionsTable.id] = tx.id
+            it[TransactionsTable.accountId] = tx.accountId
+            it[TransactionsTable.amount] = tx.amount
+            it[TransactionsTable.currency] = tx.currency.name
+            it[TransactionsTable.baseAmount] = tx.baseAmount
+            it[TransactionsTable.type] = tx.type.name
+            it[TransactionsTable.timestamp] = tx.timestamp // Assicurati che il formato sia compatibile (LocalDateTime)
+            it[TransactionsTable.merchantName] = tx.merchantName
+            it[TransactionsTable.isFraudulent] = tx.isFraudulent
         }
+    }
 
     fun generateAccounts(count: Int, targetCountryCode: CountryCode): List<Account> {
         logger.info("Generating $count synthetic accounts for country ${targetCountryCode.value}...")
@@ -73,7 +77,10 @@ class DataGenerator(private val faker: Faker = Faker()) {
                 type = if (isWithdrawal) TransactionType.WITHDRAWAL else TransactionType.DEPOSIT,
                 timestamp = LocalDateTime.now().minusDays(faker.number().numberBetween(1L, 30L)),
                 merchantName = if (isWithdrawal) faker.company().name() else null,
-                isFraudulent = isFraud            )
+                isFraudulent = isFraud,
+                currency = account.baseCurrency,
+                baseAmount = BigDecimal(faker.commerce().price(1.0, 1000.0)).setScale(2, RoundingMode.HALF_UP)
+            )
         }
     }
 

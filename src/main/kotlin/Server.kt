@@ -2,10 +2,12 @@ package it.fraudata
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.swagger.*
 import io.ktor.server.routing.*
+import it.fraudata.routes.configureGenerationRoutes
 import it.fraudata.util.*
 
 // In Ktor con EngineMain, il punto di ingresso diventa una funzione 'module'

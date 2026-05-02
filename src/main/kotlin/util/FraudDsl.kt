@@ -4,6 +4,7 @@ import it.fraudata.domain.Account
 import it.fraudata.domain.CountryCode
 import it.fraudata.domain.Transaction
 import kotlin.error
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 @DslMarker
 annotation class FraudGenDsl
@@ -84,8 +85,8 @@ class FraudDataBuilder {
             // Iteriamo e salviamo usando le funzioni che hai creato nello step precedente
             // (Assicurati che saveAccountToDb e saveTransactionToDb siano accessibili qui,
             // ad esempio importandole se le hai messe in un altro file o chiamandole su generator)
-            generatedAccounts.forEach { saveAccountToDb(it) }
-            allTransactions.forEach { saveTransactionToDb(it) }
+            generatedAccounts.forEach { generator.saveAccountToDb(it) }
+            allTransactions.forEach { generator.saveTransactionToDb(it) }
             
             logger.info { "Database persistence completed successfully." }
         } catch (e: Exception) {
@@ -93,11 +94,14 @@ class FraudDataBuilder {
             // Decidi se vuoi fermare tutto lanciando un'eccezione o continuare e restituire i dati generati
             // throw e 
         }
+        
+        return Pair(generatedAccounts, allTransactions)
     }
+}
 
 // 3. L'Entry Point del nostro DSL (La funzione globale)
-fun generateFraudData(block: FrauDataBuilder.() -> Unit): Pair<List<Account>, List<Transaction>> {
-    val builder = FrauDataBuilder()
+fun generateFraudData(block: FraudDataBuilder.() -> Unit): Pair<List<Account>, List<Transaction>> {
+    val builder = FraudDataBuilder()
     builder.block()
     return builder.build()
 }

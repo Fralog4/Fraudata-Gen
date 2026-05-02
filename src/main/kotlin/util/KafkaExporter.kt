@@ -8,10 +8,11 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 import java.util.Properties
 import kotlinx.coroutines.delay
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object KafkaExporter {
 
-    private val producer : KafkaProducer<String,String>
+    private var producer : KafkaProducer<String,String>? = null
     private const val TOPIC = "transactions"
     private val jsonFormatter = Json {prettyPrint = false}
     private val logger = KotlinLogging.logger {}
@@ -53,10 +54,10 @@ fun streamTransactions(transactions : List<Transaction>){
          */
         val record = ProducerRecord(TOPIC,tx.accountId, jsonValue)
 
-        producer.send(record) // send() in Kafka è asincrono. Mette il messaggio in una coda interna e non blocca il codice
+        producer?.send(record) // send() in Kafka è asincrono. Mette il messaggio in una coda interna e non blocca il codice
     }
 
-    producer.flush()
+    producer?.flush()
     logger.info("Kafka streaming completed.")
 }
 
@@ -75,12 +76,12 @@ fun streamTransactions(transactions : List<Transaction>){
 
             val jsonValue = jsonFormatter.encodeToString(tx)
             val record = ProducerRecord (TOPIC, tx.accountId, jsonValue)
-            producer.send(record)
+            producer?.send(record)
             //Kotlin coroutines ci permette di "dormire" senza bloccare il thread, quindi il server può continuare a rispondere ad altre richieste
             delay(delayMillis)
         }
 
-        producer.flush()
+        producer?.flush()
         logger.info("LIVE Kafka streaming completed.")
 
     }

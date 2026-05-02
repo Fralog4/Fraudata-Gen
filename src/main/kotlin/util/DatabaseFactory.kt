@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.transactions.transaction
 
 // Definizione dello Schema (Tabelle)
@@ -41,10 +42,10 @@ object DatabaseFactory {
 
 
         val connectionPool = HikariDataSource(HikariConfig().apply {
-            driverClassName = driverClassName
-            jdbcUrl = jdbcUrl
-            username = user
-            password = password
+            this.driverClassName = driverClassName
+            this.jdbcUrl = jdbcUrl
+            this.username = user
+            this.password = password
             maximumPoolSize = 50
             isAutoCommit = false
 

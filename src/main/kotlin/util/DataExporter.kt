@@ -2,6 +2,7 @@ package it.fraudata.util
 
 import it.fraudata.domain.Account
 import it.fraudata.domain.Transaction
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
