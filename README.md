@@ -1,8 +1,4 @@
-# 🏦 Synthetic Banking Data Generator (FraudataGen)
-
-A lightweight, high-performance REST API built with Kotlin and Ktor to generate synthetic, highly realistic banking data (accounts and transactions). 
-
-Designed to solve the "Cold Start" and Privacy (GDPR) problems in Fintech, this tool provides developers, QA engineers, and Data Scientists with millions of PII-free data points to train Machine Learning models (like Fraud Detection systems) or run load tests, without exposing real customer data.
+# Fraudata-Gen
 
 ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 ![Ktor](https://img.shields.io/badge/ktor-%23087CFA.svg?style=for-the-badge&logo=ktor&logoColor=white)
@@ -10,97 +6,218 @@ Designed to solve the "Cold Start" and Privacy (GDPR) problems in Fintech, this 
 ![PostgreSQL](https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-> **Note:** [Insert an animated GIF here showing the Swagger UI execution and Kafka UI monitoring]
+Ktor/Kotlin service for generating synthetic banking data and optionally streaming transactions to Kafka.
 
-## ✨ Key Features
+The project exposes authenticated REST endpoints, persists generated data to PostgreSQL, exports JSON/CSV files, and can publish transactions to a Kafka topic (`transactions`) at a controlled TPS rate.
 
-* **Behavioral Simulation Engine:** Uses Markov Chains to generate realistic transaction sequences based on predefined psychological personas (e.g., "The Student", "The Gambler", "The Salaryman").
-* **Real-Time Data Streaming:** Integrated with Apache Kafka to simulate live POS/ATM traffic. Uses Kotlin Coroutines to manage asynchronous background streaming with configurable TPS (Transactions Per Second).
-* **Multi-Currency & FX Rates:** Supports international transactions (`EUR`, `USD`, `GBP`, `JPY`, `CHF`) with an internal Foreign Exchange engine calculating base amounts.
-* **Persistent Database Sink:** Automatically saves generated accounts and transactions into a relational PostgreSQL database via JetBrains Exposed ORM.
-* **API Security:** Endpoints are protected via API Key Bearer authentication to prevent unauthorized data generation.
-* **Custom Kotlin DSL:** A type-safe, elegant Domain Specific Language (`@DslMarker`) to configure data generation rules dynamically.
-* **API-First Design:** Fully documented with OpenAPI 3.0 and bundled with an interactive Swagger UI.
+## Tech Stack
 
-## 🛠️ Tech Stack
+- Kotlin 2.2.0
+- Ktor 2.3.10 (Netty)
+- PostgreSQL 16 + Exposed ORM + HikariCP
+- Apache Kafka 3.7.0
+- Docker/Podman Compose
 
-* **Language:** Kotlin 2.2.0
-* **Framework:** Ktor Server 2.3.10 (Netty)
-* **Message Broker:** Apache Kafka 3.7.0 (KRaft mode)
-* **Database & ORM:** PostgreSQL 16 & JetBrains Exposed
-* **Data Mocking:** Datafaker 2.1.0
-* **Serialization:** `kotlinx-serialization-json` 1.6.3
-* **Logging:** `kotlin-logging` & Logback (JSON Structured Logs)
-* **Testing:** JUnit 5 (5.10.2) & MockK (1.13.10)
-* **Infrastructure:** Docker & Docker Compose
+## Current API Status
 
-## 🚀 Getting Started
+Implemented endpoints:
 
-### Prerequisites
-* Java JDK 21 installed.
-* Docker Desktop (for Kafka & PostgreSQL infrastructure).
+- `POST /api/v1/generate` (auth required)
+- `POST /api/v1/stream` (auth required)
+- `GET /swagger`
 
-### Installation & Run
+## Runtime Architecture
 
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/yourusername/fraud-data-generator.git](https://github.com/yourusername/fraud-data-generator.git)
-   cd fraud-data-generator
-   ```
+- `fraudgen-api` (port `8080`): main API service
+- `db` (port `5432`): PostgreSQL
+- `kafka` (port `9092`): broker
+- `kafka-ui` (port `8081`): topic/message inspection UI
 
-2. Configure environment variables:
-   Create a `.env` file in the root directory and add your secret keys (e.g., `API_SECRET_KEY=YourSecretKey`, `DB_PASSWORD=YourDbPass`).
+## Prerequisites
 
-3. Start the Infrastructure (Kafka & Postgres runs in background):
-   ```bash
-   docker-compose up -d
-   ```
-   *You can monitor Kafka topics by opening Kafka UI at `http://localhost:8081`.*
+- Java 21 (for local Gradle runs)
+- Docker or Podman + Compose provider
+- Ports available: `8080`, `8081`, `5432`, `9092`
 
-4. Run the Ktor application locally using the Gradle wrapper:
-   ```bash
-   ./gradlew run
-   ```
-   *The Ktor Netty server will start on port `8080`.*
+## Quick Start (Compose)
 
-## 📖 Usage
+From project root:
 
-### Interactive API (Swagger UI)
-Open your favorite browser and navigate to:
-👉 **`http://localhost:8080/swagger`**
-*(Remember to click "Authorize" and input your API Key to unlock the endpoints!)*
+```powershell
+podman compose -f docker-compose.yml -p fraudata-gen up -d --build
+```
 
-### Endpoint 1: Batch Generation (`/api/v1/generate`)
-Generates data instantly, saves it to PostgreSQL, and exports it to JSON/CSV files.
+Check status:
 
-```bash
-curl -X 'POST' \
-  'http://localhost:8080/api/v1/generate' \
-  -H 'Authorization: Bearer <YOUR_API_KEY>' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
+```powershell
+podman compose -f docker-compose.yml -p fraudata-gen ps
+```
+
+Open:
+
+- Swagger UI: `http://localhost:8080/swagger`
+- Kafka UI: `http://localhost:8081`
+
+## Authentication
+
+API endpoints are protected with Bearer auth.
+
+- Default dev key (fallback): `default-dev-key`
+- If `API_SECRET_KEY` is set in environment, use that value instead.
+
+In Swagger `Authorize` popup, insert only the token value (without `Bearer ` prefix).
+
+## Endpoints
+
+### 1) `POST /api/v1/generate`
+
+Generates synthetic accounts/transactions, writes to PostgreSQL, exports to files.
+
+Request body:
+
+```json
+{
   "accountsCount": 50,
   "countryCode": "GB",
   "transactionsPerAccount": 20,
   "persona": "Gambler"
-}'
+}
 ```
 
-### Endpoint 2: Live Streaming (`/api/v1/stream`)
-Fires an asynchronous background job that streams generated transactions to the Kafka `transactions` topic mimicking real-time traffic.
+Response:
 
-```bash
-curl -X 'POST' \
-  'http://localhost:8080/api/v1/stream' \
-  -H 'Authorization: Bearer <YOUR_API_KEY>' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
+```json
+{
+  "message": "Data generated successfully",
+  "totalAccounts": 50,
+  "totalTransactions": 1000
+}
+```
+
+Generated files are written to:
+
+- `generated-data/accounts.json`
+- `generated-data/transactions.json`
+- `generated-data/accounts.csv`
+- `generated-data/transactions.csv`
+
+### 2) `POST /api/v1/stream`
+
+Generates synthetic data and streams transactions to Kafka topic `transactions` at `tps`.
+
+Request body:
+
+```json
+{
   "accountsCount": 5,
   "countryCode": "US",
   "transactionsPerAccount": 50,
   "persona": "Student",
   "tps": 10
-}'
+}
+```
+
+Response (async acceptance):
+
+```json
+{
+  "message": "Stream job accepted",
+  "status": "RUNNING",
+  "estimatedCompletionSeconds": 25
+}
+```
+
+### Stream Job Behavior
+
+The stream job is finite, not infinite.
+
+- Total events = `accountsCount * transactionsPerAccount`
+- Duration (approx) = `total events / tps` seconds
+- Job completion is logged as `LIVE Kafka streaming completed.`
+
+## Validation Rules (Current)
+
+- `accountsCount > 0`
+- `transactionsPerAccount > 0`
+- `tps > 0` (stream only)
+
+Invalid values return `400 Bad Request`.
+
+## Environment Variables
+
+Main variables used by the API container:
+
+- `PORT` (default `8080`)
+- `KAFKA_BOOTSTRAP_SERVERS`
+- `DB_URL`
+- `DB_USER`
+- `DB_PASSWORD`
+- `API_SECRET_KEY` (optional, overrides dev fallback)
+
+## Operational Checks
+
+### API logs
+
+```powershell
+podman logs fraudgen-api-container --tail 200
+```
+
+### Check PostgreSQL row counts
+
+```powershell
+podman exec -it fraudgen-postgres psql -U fraudgen -d fraudgen_db -c "select count(*) from accounts;"
+podman exec -it fraudgen-postgres psql -U fraudgen -d fraudgen_db -c "select count(*) from transactions;"
+```
+
+### Check Kafka messages
+
+Use Kafka UI:
+
+1. Open `http://localhost:8081`
+2. Select cluster
+3. Open topic `transactions`
+4. Inspect `Messages`
+
+## Troubleshooting
+
+### Swagger shows parser/indentation error
+
+Cause: malformed `openapi.yml`.  
+Fix: verify YAML indentation under `components.securitySchemes`.
+
+### `404` on `/api/v1/generate` or `/api/v1/stream`
+
+Cause: old container image still running.  
+Fix:
+
+```powershell
+podman compose -f docker-compose.yml -p fraudata-gen up -d --build fraudgen-api
+```
+
+### API cannot connect to DB (`localhost:5432 refused`)
+
+Cause: DB host in container must be service name, not localhost.  
+Fix: ensure `DB_URL=jdbc:postgresql://db:5432/fraudgen_db`.
+
+### `generated-data` is empty
+
+Cause: API version not writing to mounted folder or request not executed after rebuild.  
+Fix:
+
+1. rebuild API container
+2. call `/api/v1/generate`
+3. refresh host folder `generated-data`
+
+## Stop / Cleanup
+
+Stop stack:
+
+```powershell
+podman compose -f docker-compose.yml -p fraudata-gen down
+```
+
+Stop and remove volumes:
+
+```powershell
+podman compose -f docker-compose.yml -p fraudata-gen down -v
 ```
