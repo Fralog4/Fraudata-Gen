@@ -11,6 +11,7 @@ object DataExporter {
     
     private val jsonFormatter = Json { prettyPrint = true }
     private val logger = KotlinLogging.logger {}
+    private val outputDir = File("generated-data").apply { mkdirs() }
 
     fun exportToJson(accounts: List<Account>, transactions: List<Transaction>) {
         logger.info("Exporting data to JSON...")
@@ -18,8 +19,8 @@ object DataExporter {
         val accountsJson = jsonFormatter.encodeToString(accounts)
         val transactionsJson = jsonFormatter.encodeToString(transactions)
 
-        File("accounts.json").writeText(accountsJson)
-        File("transactions.json").writeText(transactionsJson)
+        File(outputDir, "accounts.json").writeText(accountsJson)
+        File(outputDir, "transactions.json").writeText(transactionsJson)
 
         logger.info("JSON export completed successfully.")
     }
@@ -41,8 +42,8 @@ object DataExporter {
             "${it.id},${it.accountId},${it.amount},${it.currency},${it.baseAmount},${it.type},${it.timestamp},$merchant,${it.isFraudulent}"
         }
 
-        File("accounts.csv").writeText(accountsCsv)
-        File("transactions.csv").writeText(transactionsCsv)
+        File(outputDir, "accounts.csv").writeText(accountsCsv)
+        File(outputDir, "transactions.csv").writeText(transactionsCsv)
 
         logger.info("CSV export completed successfully.")
     }
