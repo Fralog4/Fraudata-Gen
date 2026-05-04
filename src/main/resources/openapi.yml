@@ -45,7 +45,7 @@ paths:
                 $ref: "#/components/schemas/GenerationResponse"
 
 components:
-securitySchemes:
+  securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
