@@ -30,6 +30,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      # Step C.1: ensure wrapper is executable on Linux runners
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       # Step D: Compile
       - name: Build and run tests
         run: ./gradlew build --no-daemon
